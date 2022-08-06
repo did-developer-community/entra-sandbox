@@ -1,0 +1,17 @@
+{
+  "includeQRCode": false,
+  "callback": {
+    "url": "...set at runtime...",
+    "state": "...set at runtime..."
+  },
+  "authority": "...set at runtime...",
+  "registration": {
+    "clientName": "...set at runtime...",
+    "logoUrl": "...set at runtime...",
+    "termsOfServiceUrl": "...set at runtime..."
+  },
+  "type": "...set at runtime...",
+  "manifest": "...set at runtime...",
+  "claims": {
+  }
+}
