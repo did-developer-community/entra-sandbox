@@ -26,6 +26,7 @@
             </div>
             <a id="deeplink" style="display: none;margin-top: 10px;">Tap to open Authenticator on mobile</a>
             <div id="qrcode" style="text-align: center"></div>
+            <div id="custom-identity-wallet-extension" style="margin-top: 50px;"></div>
             <div id="pinCodeText" style="display: none"></div>
 
             <div id="message-wrapper" class="margin-bottom-75 margin-top-75" style="display: none">
@@ -38,6 +39,20 @@
                 var Issuance = document.getElementById('issuance');
                 var qrcode = new QRCode("qrcode", { width: 300, height: 300 });
                 var respIssuanceReq = null;
+
+                function openExtension(redirectURL){
+                    window.postMessage(
+                        {
+                            type: "IDENTITY_WALLET",
+                            action: "OPEN_TAB",
+                            data: {
+                                redirectURL, // openid-vc://?request_uri=...
+                            },
+                        },
+                        "*"
+                    );
+                }
+
                 Issuance.addEventListener('click', () => {
                     fetch('/api/issuer/issuance-request')
                     .then(function(response) {
@@ -57,6 +72,7 @@
                                 qrcode.makeCode(respIssuanceReq.url);
                                 document.getElementById('issuance').style.display = "none";
                                 document.getElementById('qrText').style.display = "block";
+                                document.getElementById('custom-identity-wallet-extension').innerHTML = `<button type="button" id="custom-identity-wallet-extension-button" onClick="openExtension('${respIssuanceReq.url}')" class="button">Open in Custom Identity Wallet Extension</button>`;
                                 // if (respIssuanceReq.pin) {
                                 //     document.getElementById('pinCodeText').innerHTML = "Pin code: " + respIssuanceReq.pin;
                                 //     document.getElementById('pinCodeText').style.display = "block";
