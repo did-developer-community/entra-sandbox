@@ -1,9 +1,9 @@
 'use strict';
 ///////////////////////////////////////////////////////////////////////////////////////
 // Node packages
-require('dotenv').config()
-const express = require('express')
-const session = require('express-session')
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
 const msal = require('@azure/msal-node');
 const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
@@ -187,6 +187,16 @@ app.get('/api/issuer/issuance-response', async (req, res) => {
   var id = req.query.id;
   sessionStore.get( id, (error, session) => {
     if (session && session.sessionData) {
+      if(session.sessionData.message == 'Credential successfully issued'){
+        // record issuance status to database
+        if(process.env.record_issuance_event.toUpperCase() == 'TRUE'){
+          const crypto = require("crypto");
+          const recordIssuanceEvent = require('./aztbl.js');
+          console.log(`issuance completed to ${req.oidc.user.email}`);
+          // at this moment, MS Entra does not return credential id on issuance, so use UUID instead.
+          recordIssuanceEvent(crypto.randomUUID(), req.oidc.user.email, req.oidc.user.name, process.env.issuance_type);
+        }
+      }
       res.status(200).json(session.sessionData);   
     }
   })
